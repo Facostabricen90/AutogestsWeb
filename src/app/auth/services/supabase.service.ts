@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import {
   AuthChangeEvent,
   AuthResponse,
@@ -24,8 +24,10 @@ export interface Profile {
 })
 export class SupabaseService {
 
-  private supabase: SupabaseClient
+  public supabase: SupabaseClient
   _session: AuthSession | null = null
+  currentUser = signal<{email: string; username: string} | null>(null);
+
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey)
   }
@@ -44,6 +46,12 @@ export class SupabaseService {
   }
   authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
     return this.supabase.auth.onAuthStateChange(callback)
+  }
+  getCurrentUserEmail(){
+    return this.supabase.auth.getUser().then(({ data, error }) => {
+      if (error || !data.user) return null;
+      return data.user.email;
+    });
   }
   signIn(email: string, password: string) {
     return this.supabase.auth.signInWithPassword({email, password})
@@ -64,12 +72,6 @@ export class SupabaseService {
       updated_at: new Date(),
     }
     return this.supabase.from('profiles').upsert(update)
-  }
-  downLoadImage(path: string) {
-    return this.supabase.storage.from('avatars').download(path)
-  }
-  uploadAvatar(filePath: string, file: File) {
-    return this.supabase.storage.from('avatars').upload(filePath, file)
   }
   register(email: string, username: string, password: string): Observable<AuthResponse> {
     const promise = this.supabase.auth.signUp({
