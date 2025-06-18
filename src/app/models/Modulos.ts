@@ -6,7 +6,7 @@ export interface Modulos {
 
 export interface PermisoModulos {
   id_modulo?: number;
-  modulos?: Modulos[];
+  modulos?: Modulos;
 }
 
 export interface UsuarioConModulos {

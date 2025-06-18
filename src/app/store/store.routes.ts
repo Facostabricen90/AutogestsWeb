@@ -1,10 +1,13 @@
 import { Routes } from "@angular/router";
 import { StoreLayoutComponent } from "./layouts/store-layout/store-layout.component";
 import { HomePageComponent } from "./pages/home-page/home-page.component";
-import { ObjectPageComponent } from "./pages/object-page/object-page.component";
 import { NotFoundPageComponent } from "./pages/not-found-page/not-found-page.component";
-import { GroupPageComponent } from "./pages/group-page/group-page.component";
 import { authGuard } from "@/auth/guards/auth.guard";
+import { BusinessPageComponent } from "./pages/business-page/business-page.component";
+import { CategoriesPageComponent } from "./pages/categories-page/categories-page.component";
+import { EmployeesPageComponent } from "./pages/employees-page/employees-page.component";
+import { MarksPageComponent } from "./pages/marks-page/marks-page.component";
+import { ProductsPageComponent } from "./pages/products-page/products-page.component";
 
 
 export const storeRoutes: Routes = [
@@ -18,14 +21,24 @@ export const storeRoutes: Routes = [
         canActivate: [authGuard]
       },
       {
-        path: 'object/:idSlug',
-        component: ObjectPageComponent,
-        canActivate: [authGuard]
+        path: 'business',
+        component: BusinessPageComponent,
       },
       {
-        path: 'object/:idSlug',
-        component: GroupPageComponent,
-        canActivate: [authGuard]
+        path: 'employees',
+        component: EmployeesPageComponent,
+      },
+      {
+        path: 'marks',
+        component: MarksPageComponent,
+      },
+      {
+        path: 'products',
+        component: ProductsPageComponent,
+      },
+      {
+        path: 'categories',
+        component: CategoriesPageComponent,
       },
       {
         path: '**',

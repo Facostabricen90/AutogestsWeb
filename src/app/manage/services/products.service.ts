@@ -1,9 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import {
   createClient,
-  Session,
   SupabaseClient,
-  User,
 } from '@supabase/supabase-js'
 import { environment } from '@environments/environment'
 import { catchError, from, Observable, of } from 'rxjs';
