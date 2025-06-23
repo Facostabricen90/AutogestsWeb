@@ -53,6 +53,15 @@ export class SupabaseService {
       return data.user.email;
     });
   }
+  async getCurrentUserId(): Promise<string | null> {
+    const { data: { user } } = await this.supabase.auth.getUser();
+    return user?.id || null;
+  }
+
+  async signOut(): Promise<void> {
+    const { error } = await this.supabase.auth.signOut();
+    if (error) throw error;
+  }
   signIn(email: string, password: string) {
     return this.supabase.auth.signInWithPassword({email, password})
   }
@@ -63,9 +72,6 @@ export class SupabaseService {
     })
     return from(promise);
   };
-  signOut() {
-    return this.supabase.auth.signOut()
-  }
   updateProfile(profile: Profile) {
     const update = {
       ...profile,

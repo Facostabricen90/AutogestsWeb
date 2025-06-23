@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { PostgrestError, SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '@environments/environment';
 import { from, Observable, catchError, of } from 'rxjs';
 import { Empresa } from '@/models/Empresa';
@@ -41,10 +41,11 @@ export class BusinessService {
         .select('*')
         .eq('idauth', userIdAuth)
         .single()
-        .then(async usuarioResponse => {
+        .then(async (usuarioResponse: { data: Usuario | null; error: PostgrestError | null }) => {
           if (usuarioResponse.error) throw usuarioResponse.error;
-          const usuario = usuarioResponse.data as Usuario;
+          if (!usuarioResponse.data) throw new Error('Usuario no encontrado');
 
+          const usuario = usuarioResponse.data;
           if (!usuario.id) throw new Error('ID del usuario es nulo');
 
           const asignacionResponse = await this.supabase
@@ -54,16 +55,19 @@ export class BusinessService {
             .single();
 
           if (asignacionResponse.error) throw asignacionResponse.error;
-          const asignacion = asignacionResponse.data as AsignarEmpresa;
+          if (!asignacionResponse.data) throw new Error('Asignación no encontrada');
+
+          const asignacion = asignacionResponse.data;
+          if (!asignacion.id_empresa) throw new Error('ID de empresa es nulo');
 
           const empresaResponse = await this.supabase
             .from('empresa')
             .select('*')
             .eq('id', asignacion.id_empresa)
-            .single();
+            .single() as { data: Empresa | null; error: PostgrestError | null };
 
           if (empresaResponse.error) throw empresaResponse.error;
-          return empresaResponse.data as Empresa;
+          return empresaResponse.data;
         })
     ).pipe(
       catchError(error => {
