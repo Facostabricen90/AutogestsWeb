@@ -1,281 +1,170 @@
 <section class="bg-gray-50 dark:bg-gray-900 h-screen w-screen pt-6 mt-6">
-  <div
-    class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
-  >
-    <a
-      routerLink="/"
-      class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-    >
+  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+    <a routerLink="/" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
       <img class="w-8 h-8 mr-2" src="logo.png" alt="logo" />
       Autogest
     </a>
     <div
-      class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
-    >
+      class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
       <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-        <h1
-          class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
-        >
+        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
           Nueva cuenta
         </h1>
         <form class="form-widget" [formGroup]="form" (ngSubmit)="onSubmit()">
           <div>
-            <label
-              for="email"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Direccion de correo:
             </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
+            <input type="email" name="email" id="email"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="nombre@company.com"
-              required=""
-              formControlName="email"
-            />
+              placeholder="nombre@company.com" required="" formControlName="email" />
             @if(form.get('email')?.invalid && form.get('email')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="userName"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="userName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Nombre de usuario:
             </label>
-            <input
-              type="text"
-              name="userName"
-              id="userName"
+            <input type="text" name="userName" id="userName"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Nombre Usuario"
-              required=""
-              formControlName="username"
-            />
+              placeholder="Nombre Usuario" required="" formControlName="username" />
             @if(form.get('username')?.invalid && form.get('username')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="nombre"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="nombre" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Nombre completo:
             </label>
-            <input
-              type="text"
-              name="nombreCompleto"
-              id="nombreCompleto"
+            <input type="text" name="nombreCompleto" id="nombreCompleto"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Nombre Completo"
-              required=""
-              formControlName="nombreCompleto"
-            />
+              placeholder="Nombre Completo" required="" formControlName="nombreCompleto" />
             @if(form.get('nombreCompleto')?.invalid && form.get('nombreCompleto')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="telefono"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="telefono" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Telefono:
             </label>
-            <input
-              type="text"
-              name="telefono"
-              id="telefono"
+            <input type="text" name="telefono" id="telefono"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Telefono"
-              required=""
-              formControlName="telefono"
-            />
+              placeholder="Telefono" required="" formControlName="telefono" />
             @if(form.get('telefono')?.invalid && form.get('telefono')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="direccion"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="direccion" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Direccion:
             </label>
-            <input
-              type="text"
-              name="direccion"
-              id="direccion"
+            <input type="text" name="direccion" id="direccion"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Direccion"
-              required=""
-              formControlName="direccion"
-            />
+              placeholder="Direccion" required="" formControlName="direccion" />
             @if(form.get('direccion')?.invalid && form.get('direccion')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="numeroDocumento"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="numeroDocumento" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Numero de documento:
             </label>
-            <input
-              type="text"
-              name="numeroDocumento"
-              id="numeroDocumento"
+            <input type="text" name="numeroDocumento" id="numeroDocumento"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Numero de documento"
-              required=""
-              formControlName="numeroDocumento"
-            />
+              placeholder="Numero de documento" required="" formControlName="numeroDocumento" />
             @if(form.get('numeroDocumento')?.invalid && form.get('numeroDocumento')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="tipoUsuario"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="tipoUsuario" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Tipo de usuario:
             </label>
-            <input
-              type="text"
-              name="tipoUsuario"
-              id="tipoUsuario"
+            <input type="text" name="tipoUsuario" id="tipoUsuario"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Tipo de usuario"
-              required=""
-              formControlName="tipoUsuario"
-            />
+              placeholder="Tipo de usuario" required="" formControlName="tipoUsuario" />
             @if(form.get('tipoUsuario')?.invalid && form.get('tipoUsuario')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="tipoDocumento"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="tipoDocumento" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Tipo de documento:
             </label>
-            <input
-              type="text"
-              name="tipoDocumento"
-              id="tipoDocumento"
+            <input type="text" name="tipoDocumento" id="tipoDocumento"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Tipo de documento"
-              required=""
-              formControlName="tipoDocumento"
-            />
+              placeholder="Tipo de documento" required="" formControlName="tipoDocumento" />
             @if(form.get('tipoDocumento')?.invalid && form.get('tipoDocumento')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Contraseña
             </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="••••••••"
+            <input type="password" name="password" id="password" placeholder="••••••••"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required=""
-              formControlName="password"
-            />
+              required="" formControlName="password" />
             @if(form.get('password')?.invalid && form.get('password')?.touched) {
-              <div class="text-red-500 text-xs mt-1">
-                Este campo es requerido
-              </div>
+            <div class="text-red-500 text-xs mt-1">
+              Este campo es requerido
+            </div>
             }
           </div>
           <div>
-            <label
-              for="confirm-password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Confirmar contraseña
             </label>
-            <input
-              type="password"
-              name="confirm-password"
-              id="confirm-password"
-              placeholder="••••••••"
+            <input type="password" name="confirm-password" id="confirm-password" placeholder="••••••••"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required=""
-            />
-            @if(form.get('confirm-password')?.invalid && form.get('confirm-password')?.touched && form.get('confirm-password')?.value !== form.get('password')?.value) {
-              <div class="text-red-500 text-xs mt-1">
-                Las contraseñas no coinciden
-              </div>
+              required="" />
+            @if(form.get('confirm-password')?.invalid && form.get('confirm-password')?.touched &&
+            form.get('confirm-password')?.value !== form.get('password')?.value) {
+            <div class="text-red-500 text-xs mt-1">
+              Las contraseñas no coinciden
+            </div>
             }
           </div>
           <div class="flex items-start pt-6 pb-6">
             <div class="flex items-center h-5">
-              <input
-                id="terms"
-                aria-describedby="terms"
-                type="checkbox"
+              <input id="terms" aria-describedby="terms" type="checkbox"
                 class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-purple-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-purple-300 dark:ring-offset-gray-800"
-                required=""
-              />
+                required="" />
             </div>
             <div class="ml-3 text-sm">
-              <label
-                for="terms"
-                class="font-light text-gray-500 dark:text-gray-300"
-              >
+              <label for="terms" class="font-light text-gray-500 dark:text-gray-300">
                 Acepto los
-                <a
-                  class="font-medium text-purple-300 hover:underline dark:text-purple-500"
-                  href="#"
-                >
+                <a class="font-medium text-purple-300 hover:underline dark:text-purple-500" href="#">
                   Terminos y Condiciones
                 </a>
               </label>
             </div>
           </div>
-          <button
-            type="submit"
-            class="w-full text-white bg-purple-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-500 dark:hover:bg-purple-700 dark:focus:ring-purple-800"
-          >
+          <button type="submit"
+            class="w-full text-white bg-purple-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-500 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
             Crear cuenta
           </button>
           <p class="text-sm font-light text-gray-500 dark:text-gray-400">
             Ya tienes una cuenta?
-            <a
-              routerLink="/auth/login"
-              class="font-medium text-purple-300 hover:underline dark:text-purple-500"
-              >Inicia sesion aqui</a
-            >
+            <a routerLink="/auth/login" class="font-medium text-purple-300 hover:underline dark:text-purple-500">Inicia
+              sesion aqui</a>
           </p>
         </form>
       </div>

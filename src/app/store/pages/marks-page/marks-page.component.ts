@@ -2,19 +2,17 @@ import { Component, OnInit, signal } from '@angular/core';
 import { MarkService } from '@/manage/services/mark.service';
 import { Marca } from '@/models/Marca';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { BusinessService } from '@/manage/services/business.service';
 import { SupabaseService } from '@/auth/services/supabase.service';
 import { catchError, of } from 'rxjs';
-import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-marks-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
-  templateUrl: './marks-page.component.html',
-  styleUrls: ['./marks-page.component.css']
+  imports: [CommonModule, FormsModule],
+  templateUrl: './marks-page.component.html'
 })
 export class MarksPageComponent implements OnInit {
   nuevaDescripcion = '';
