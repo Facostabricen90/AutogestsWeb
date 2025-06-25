@@ -2,7 +2,6 @@ export interface Empresa {
   id?: number;
   nombre: string;
   simbolomoneda: string;
-  idUserAdmin: number;
 }
 
 export interface EmpresaResponse {

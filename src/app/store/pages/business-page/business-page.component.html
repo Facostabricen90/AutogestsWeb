@@ -1,1 +1,84 @@
-<p>business-page works!</p>,
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Mi Empresa</h1>
+    <div class="flex space-x-2">
+      <button (click)="cerrarSesion()" class="btn btn-error">
+        <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+  <div class="flex justify-center my-8">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+  } @else if (error()) {
+  <div class="alert alert-error mb-4">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{ error() }}</span>
+  </div>
+  } @else {
+  <div class="card bg-base-100 shadow-xl mb-6">
+    <div class="card-body">
+      <h2 class="card-title">Información de la Empresa</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Nombre de la Empresa</span>
+          </label>
+          @if (isEditing) {
+          <input type="text" [(ngModel)]="empresaEditada.nombre" class="input input-bordered">
+          } @else {
+          <div class="text-lg">{{ empresa()?.nombre }}</div>
+          }
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Símbolo de Moneda</span>
+          </label>
+          @if (isEditing) {
+          <input type="text" [(ngModel)]="empresaEditada.simbolomoneda" class="input input-bordered">
+          } @else {
+          <div class="text-lg">{{ empresa()?.simbolomoneda }}</div>
+          }
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Usuarios Registrados</span>
+          </label>
+          <div class="text-lg">{{ usuariosCount() }}</div>
+        </div>
+      </div>
+
+      <div class="card-actions justify-end mt-4">
+        @if (!isEditing) {
+        <button (click)="prepararEdicion()" class="btn btn-primary">
+          Editar Información
+        </button>
+        } @else {
+        <button (click)="guardarCambios()" class="btn btn-success" [disabled]="isLoading()">
+          @if (isLoading()) {
+          <span class="loading loading-spinner"></span>
+          } @else {
+          Guardar Cambios
+          }
+        </button>
+        <button (click)="cancelarEdicion()" class="btn btn-ghost">Cancelar</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end mt-4">
+    <button (click)="navegarAConfiguracion()" class="btn btn-secondary">
+      <i class="fas fa-cog mr-2"></i> Configuración
+    </button>
+  </div>
+  }
+</div>

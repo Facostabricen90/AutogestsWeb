@@ -129,4 +129,21 @@ export class BusinessService {
     );
   }
 
+  actualizarEmpresa(empresa: Empresa): Observable<{ success: boolean; error?: string }> {
+    return from(
+      this.supabase
+        .from('empresa')
+        .update(empresa)
+        .eq('id', empresa.id)
+        .then(response => {
+          if (response.error) throw response.error;
+          return { success: true };
+        })
+    ).pipe(
+      catchError(error => {
+        console.error('Error al actualizar empresa:', error);
+        return of({ success: false, error: error.message });
+      })
+    );
+  }
 }
