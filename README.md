@@ -115,7 +115,7 @@ Consulta el archivo [LICENSE](LICENSE) para más detalles.
 ## 📬 Contacto
 
 ¿Dudas o sugerencias?  
-Escríbeme a [tu-email@dominio.com](mailto:tu-email@dominio.com)
+Escríbeme a [tu-email@dominio.com](mailto:frank.acosta6536@ucaldas.edu.co)
 
 ---
 
