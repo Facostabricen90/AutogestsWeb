@@ -42,6 +42,25 @@ export class UsersService {
     return computed(() => this.usuarioLogueadoSignal());
   }
 
+  getUserIdByAuthId(idAuth: string): Observable<number | null> {
+    return from(
+      this.supabaseService.client
+        .from('usuarios') // Tu tabla de usuarios
+        .select('id')     // Seleccionamos solo la columna 'id'
+        .eq('idauth', idAuth) // Donde 'idauth' coincide con el UID de Supabase
+        .single() // Esperamos un único resultado
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          // Manejar errores de Supabase, pero no necesariamente lanzar para que el stream no muera
+          console.error('Error buscando ID de usuario por idauth:', error.message);
+          return null;
+        }
+        return data ? data.id : null; // Retorna el 'id' interno o null
+      })
+    );
+  }
+
   obtenerTrabajadores(idEmpresa: number): Observable<Usuario[]> {
     return from(
       this.supabase

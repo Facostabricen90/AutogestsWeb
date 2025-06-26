@@ -91,4 +91,8 @@ export class SupabaseService {
     });
     return from(promise);
   }
+
+  get client(): SupabaseClient {
+    return this.supabase;
+  }
 }

@@ -8,6 +8,7 @@ import { CategoriesPageComponent } from "./pages/categories-page/categories-page
 import { EmployeesPageComponent } from "./pages/employees-page/employees-page.component";
 import { MarksPageComponent } from "./pages/marks-page/marks-page.component";
 import { ProductsPageComponent } from "./pages/products-page/products-page.component";
+import { KardexPageComponent } from "./pages/kardex-page/kardex-page.component";
 
 
 export const storeRoutes: Routes = [
@@ -39,6 +40,10 @@ export const storeRoutes: Routes = [
       {
         path: 'categories',
         component: CategoriesPageComponent,
+      },
+      {
+        path: 'kardex',
+        component: KardexPageComponent,
       },
       {
         path: '**',
