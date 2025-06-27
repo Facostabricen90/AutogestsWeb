@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -8,16 +8,16 @@ import { KardexService } from '@/manage/services/kardex.service';
 import { ProductsService } from '@/manage/services/products.service';
 import { Kardex } from '@/models/Kardex';
 import { Producto } from '@/models/Producto';
-import { Movimiento } from '@/models/Movimiento';
-import { catchError, of, firstValueFrom } from 'rxjs';
-import { UsersService } from '@/manage/services/users.service';
+import { catchError, of, firstValueFrom, Subscription } from 'rxjs';
+import { Message } from '@/manage/interfaces/Message';
+import { RealtimePayload } from '@/manage/interfaces/RealtimePayload';
 
 @Component({
   selector: 'app-kardex-page',
   imports: [CommonModule, FormsModule],
   templateUrl: './kardex-page.component.html',
 })
-export class KardexPageComponent {
+export class KardexPageComponent implements OnInit, OnDestroy {
   idEmpresa = signal<number | null>(null);
   listaKardex = signal<Kardex[]>([]);
   isLoading = signal(true);
@@ -32,17 +32,53 @@ export class KardexPageComponent {
   userId = signal<string | null>(null);
   menuOpcionesAbierto = false;
 
+  messages: Message[] = [];
+  newMessageContent: string = '';
+  currentUserId: string = 'user_' + Math.random().toString(36).substring(7);
+
+  showNotification = signal(false);
+  notificationMessage = signal('');
+  notificationTypeClass = signal('alert-info');
+  private notificationTimeout: any;
+
+  private realtimeSubscription: Subscription | undefined;
+  private chatMessagesSubscription: Subscription | undefined;
+
+
+  lastRealtimeNotification: RealtimePayload<Message> | null = null;
+
   constructor(
     private kardexService: KardexService,
     private supabaseService: SupabaseService,
     private businessService: BusinessService,
     private productosService: ProductsService,
-    private UsuariosService: UsersService,
     private router: Router
   ) { }
 
   async ngOnInit(): Promise<void> {
     await this.loadInitialData();
+    await this.loadMessages();
+
+    this.realtimeSubscription = this.supabaseService.onTableChanges<Message>('messages').subscribe(
+      (payload) => {
+        this.lastRealtimeNotification = payload;
+
+        if (payload.eventType === 'INSERT' && payload.new) {
+          this.messages.push(payload.new);
+          this.messages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        } else if (payload.eventType === 'UPDATE' && payload.new) {
+          const index = this.messages.findIndex(msg => msg.id === payload.old?.id);
+          if (index !== -1) {
+            this.messages[index] = payload.new;
+          }
+        } else if (payload.eventType === 'DELETE' && payload.old) {
+          this.messages = this.messages.filter(msg => msg.id !== payload.old?.id);
+        }
+      },
+      (error) => {
+        console.error('Error en la suscripción de Realtime:', error);
+      }
+    );
   }
 
   private async loadInitialData(): Promise<void> {
@@ -143,11 +179,12 @@ export class KardexPageComponent {
       await this.kardexService.registrarMovimiento(newMovement);
       this.showDialog.set(false);
       await this.loadKardexEntries(currentCompanyId);
-      console.log('Movimiento registrado con éxito!');
-      window.location.reload();
+      this.loadInitialData();
+      this.showToastNotification('Movimiento registrado con éxito.', 'alert-success');
     } catch (err: any) {
       this.error.set(`Error al registrar movimiento: ${err.message || err}`);
       console.error('Error registering movement:', err);
+      this.showToastNotification(`Error: ${err.message || 'No se pudo registrar el movimiento.'}`, 'alert-error');
     } finally {
       this.isLoading.set(false);
     }
@@ -181,4 +218,52 @@ export class KardexPageComponent {
   navegarAConfiguracion(): void {
     this.router.navigate(['/configuracion']);
    }
+
+  async loadMessages(): Promise<void> {
+    const { data, error } = await this.supabaseService.getMessages();
+    if (error) {
+      console.error('Error al cargar mensajes:', error);
+    } else {
+      this.messages = data || [];
+    }
+  }
+
+  async sendMessage(): Promise<void> {
+    if (this.newMessageContent.trim()) {
+      const { data, error } = await this.supabaseService.addMessage(this.newMessageContent, this.currentUserId);
+      if (error) {
+        console.error('Error al enviar mensaje:', error);
+      } else {
+        console.log('Mensaje enviado:', data);
+        this.newMessageContent = '';
+      }
+    }
+  }
+
+  showToastNotification(message: string, typeClass: string = 'alert-info'): void {
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+
+    this.notificationMessage.set(message);
+    this.notificationTypeClass.set(typeClass);
+    this.showNotification.set(true);
+
+    this.notificationTimeout = setTimeout(() => {
+      this.showNotification.set(false);
+      this.notificationMessage.set('');
+    }, 5000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.realtimeSubscription) {
+      this.realtimeSubscription.unsubscribe();
+    }
+    if (this.chatMessagesSubscription) {
+      this.chatMessagesSubscription.unsubscribe();
+    }
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+  }
 }

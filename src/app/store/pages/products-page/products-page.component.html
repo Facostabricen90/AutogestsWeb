@@ -121,3 +121,11 @@
     </div>
   </div>
 </div>
+
+<div class="toast toast-top toast-end z-[9999]">
+  @if (showNotification()) {
+  <div class="alert" [ngClass]="notificationTypeClass">
+    <span class="font-semibold">{{ notificationMessage() }}</span>
+  </div>
+  }
+</div>

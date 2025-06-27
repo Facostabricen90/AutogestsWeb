@@ -4,5 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-employees-page',
   imports: [],
   templateUrl: './employees-page.component.html',
+  styleUrls: ['./employees-page.component.css']
 })
 export class EmployeesPageComponent { }

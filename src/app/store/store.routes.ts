@@ -18,8 +18,7 @@ export const storeRoutes: Routes = [
     children: [
       {
         path: '',
-        component: HomePageComponent,
-        canActivate: [authGuard]
+        component: HomePageComponent
       },
       {
         path: 'business',

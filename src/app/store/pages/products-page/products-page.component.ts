@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { catchError, of, Subscription } from 'rxjs';
 
 import { Producto } from '@/models/Producto';
 import { Marca } from '@/models/Marca';
@@ -13,6 +13,8 @@ import { SupabaseService } from '@/auth/services/supabase.service';
 import { ProductsService } from '@/manage/services/products.service';
 import { MarkService } from '@/manage/services/mark.service';
 import { CategoriesService } from '@/manage/services/categories.service';
+import { RealtimePayload } from '@/manage/interfaces/RealtimePayload';
+import { Message } from '@/manage/interfaces/Message';
 
 @Component({
   selector: 'app-products-page',
@@ -23,6 +25,21 @@ export class ProductsPageComponent implements OnInit {
   idEmpresa: number | null = null;
   uniqueMarcas = signal<Marca[]>([]);
   uniqueCategorias = signal<Categoria[]>([]);
+
+   messages: Message[] = [];
+    newMessageContent: string = '';
+    currentUserId: string = 'user_' + Math.random().toString(36).substring(7);
+
+    showNotification = signal(false);
+    notificationMessage = signal('');
+    notificationTypeClass = signal('alert-info');
+    private notificationTimeout: any;
+
+    private realtimeSubscription: Subscription | undefined;
+    private chatMessagesSubscription: Subscription | undefined;
+
+
+    lastRealtimeNotification: RealtimePayload<Message> | null = null;
 
   productosDetallados = signal<{
     producto?: Producto;
@@ -59,6 +76,28 @@ export class ProductsPageComponent implements OnInit {
     await this.cargarProductosDetallados();
     await this.loadUniqueMarcas();
     await this.loadUniqueCategorias();
+    await this.loadMessages();
+
+        this.realtimeSubscription = this.supabase.onTableChanges<Message>('messages').subscribe(
+          (payload) => {
+            this.lastRealtimeNotification = payload;
+
+            if (payload.eventType === 'INSERT' && payload.new) {
+              this.messages.push(payload.new);
+              this.messages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+            } else if (payload.eventType === 'UPDATE' && payload.new) {
+              const index = this.messages.findIndex(msg => msg.id === payload.old?.id);
+              if (index !== -1) {
+                this.messages[index] = payload.new;
+              }
+            } else if (payload.eventType === 'DELETE' && payload.old) {
+              this.messages = this.messages.filter(msg => msg.id !== payload.old?.id);
+            }
+          },
+          (error) => {
+            console.error('Error en la suscripción de Realtime:', error);
+          }
+        );
   }
 
   async insertarProducto(): Promise<void> {
@@ -90,9 +129,11 @@ export class ProductsPageComponent implements OnInit {
         id_categoria: 0
       };
       await this.cargarProductosDetallados();
+      this.showToastNotification('Producto registrado con éxito.', 'alert-success');
     } catch (err) {
       console.error(err);
       this.error.set('Error al insertar producto');
+      this.showToastNotification('Error al insertar producto', 'alert-error');
     } finally {
       this.isLoading.set(false);
     }
@@ -169,6 +210,54 @@ export class ProductsPageComponent implements OnInit {
       console.error(err);
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+  async loadMessages(): Promise<void> {
+    const { data, error } = await this.supabase.getMessages();
+    if (error) {
+      console.error('Error al cargar mensajes:', error);
+    } else {
+      this.messages = data || [];
+    }
+  }
+
+  async sendMessage(): Promise<void> {
+    if (this.newMessageContent.trim()) {
+      const { data, error } = await this.supabase.addMessage(this.newMessageContent, this.currentUserId);
+      if (error) {
+        console.error('Error al enviar mensaje:', error);
+      } else {
+        console.log('Mensaje enviado:', data);
+        this.newMessageContent = '';
+      }
+    }
+  }
+
+  showToastNotification(message: string, typeClass: string = 'alert-info'): void {
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+
+    this.notificationMessage.set(message);
+    this.notificationTypeClass.set(typeClass);
+    this.showNotification.set(true);
+
+    this.notificationTimeout = setTimeout(() => {
+      this.showNotification.set(false);
+      this.notificationMessage.set('');
+    }, 5000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.realtimeSubscription) {
+      this.realtimeSubscription.unsubscribe();
+    }
+    if (this.chatMessagesSubscription) {
+      this.chatMessagesSubscription.unsubscribe();
+    }
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
     }
   }
 }

@@ -123,15 +123,6 @@ export class BusinessPageComponent {
     }
   }
 
-  async cerrarSesion(): Promise<void> {
-    try {
-      await this.supabaseService.signOut();
-      this.router.navigate(['/login'], { replaceUrl: true });
-    } catch (error) {
-      this.error.set('Error al cerrar sesión');
-    }
-  }
-
   navegarAConfiguracion(): void {
     this.router.navigate(['/configuracion']);
     }

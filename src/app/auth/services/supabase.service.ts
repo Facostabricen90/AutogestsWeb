@@ -9,7 +9,9 @@ import {
   User,
 } from '@supabase/supabase-js'
 import { environment } from '@environments/environment'
-import { from, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable, Observer } from 'rxjs';
+import { RealtimePayload } from '@/manage/interfaces/RealtimePayload';
+import { Message } from '@/manage/interfaces/Message';
 
 export interface Profile {
   id?: string
@@ -24,19 +26,75 @@ export interface Profile {
 })
 export class SupabaseService {
 
-  public supabase: SupabaseClient
-  _session: AuthSession | null = null
-  currentUser = signal<{email: string; username: string} | null>(null);
+  public supabase: SupabaseClient;
+  private _session = new BehaviorSubject<AuthSession | null>(null);
+  public session$ = this._session.asObservable();
+  currentUser = signal<{ email: string; username: string } | null>(null);
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey)
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
+      auth: {
+        persistSession: true,
+        storage: localStorage
+      }
+    });
+
+    this.initAuthListener();
+    this.loadInitialSession();
   }
-  get session() {
-    this.supabase.auth.getSession().then(({ data }) => {
-      this._session = data.session
-    })
-    return this._session
+
+  private initAuthListener(): void {
+    this.supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event);
+      this._session.next(session);
+      if (session?.user) {
+        this.updateCurrentUser(session.user);
+      } else {
+        this.currentUser.set(null);
+      }
+    });
   }
+
+  private async loadInitialSession(): Promise<void> {
+    try {
+      const { data: { session } } = await this.supabase.auth.getSession();
+      this._session.next(session);
+      if (session?.user) {
+        await this.updateCurrentUser(session.user);
+      }
+    } catch (error) {
+      console.error('Error loading initial session:', error);
+      this._session.next(null);
+    }
+  }
+
+  private async updateCurrentUser(user: User): Promise<void> {
+    try {
+      const { data: profile, error } = await this.supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      this.currentUser.set({
+        email: user.email ?? '',
+        username: profile?.username ?? ''
+      });
+    } catch (error) {
+      console.error('Error updating current user:', error);
+      this.currentUser.set({
+        email: user.email ?? '',
+        username: ''
+      });
+    }
+  }
+
+  get session(): AuthSession | null {
+    return this._session.value;
+  }
+
   profile(user: User) {
     return this.supabase
       .from('profiles')
@@ -94,5 +152,45 @@ export class SupabaseService {
 
   get client(): SupabaseClient {
     return this.supabase;
+  }
+
+  // Obtener todos los mensajes
+  async getMessages(): Promise<{ data: Message[] | null; error: any }> {
+    return await this.supabase
+      .from('messages')
+      .select('*')
+      .order('created_at', { ascending: true });
+  }
+
+  async addMessage(content: string, userId: string): Promise<{ data: Message[] | null; error: any }> {
+    return await this.supabase
+      .from('messages')
+      .insert({ content, user_id: userId });
+  }
+
+  onTableChanges<T extends { [key: string]: any }>(tableName: string): Observable<RealtimePayload<T>> {
+    return new Observable((observer: Observer<RealtimePayload<T>>) => {
+      const channel = (this.supabase
+        .channel(`public:${tableName}`) as any)
+        .on('postgres_changes', { event: '*', schema: 'public', table: tableName }, (payload: RealtimePayload<T>) => {
+          console.log('Realtime change received:', payload);
+          observer.next(payload as RealtimePayload<T>);
+        })
+        .subscribe((status: string) => {
+          if (status === 'SUBSCRIBED') {
+            console.log(`Suscrito a ${tableName} en tiempo real.`);
+          } else if (status === 'CLOSED') {
+            console.warn(`Suscripción a ${tableName} cerrada.`);
+            observer.complete();
+          } else if (status === 'CHANNEL_ERROR') {
+            console.error(`Error en el canal de ${tableName}.`);
+          }
+        });
+
+      return () => {
+        console.log(`Desuscribiendo del canal de ${tableName}.`);
+        this.supabase.removeChannel(channel);
+      };
+    });
   }
 }

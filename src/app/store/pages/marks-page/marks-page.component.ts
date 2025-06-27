@@ -134,15 +134,6 @@ export class MarksPageComponent implements OnInit {
     }
   }
 
-  async cerrarSesion(): Promise<void> {
-    try {
-      await this.supabase.signOut();
-      this.router.navigate(['/login'], { replaceUrl: true });
-    } catch (error) {
-      this.error.set('Error al cerrar sesión');
-    }
-  }
-
   navegarAConfiguracion(): void {
     this.router.navigate(['/configuracion']);
   }

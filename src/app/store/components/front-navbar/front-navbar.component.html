@@ -40,13 +40,12 @@
             >
           </li>
           <li>
-            <a
-              routerLink="/object/1"
-              class="btn btn-ghost"
-              routerLinkActive="text-secondary"
-              >Objects</a
-            >
+            <button (click)="cerrarSesion()" class="btn btn-ghost">
+              <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+              </button>
           </li>
+          <li>
+            <a routerLink="/" class="btn btn-primary">{{ userEmail }}</a>     </li>
         </ul>
       </div>
     </div>
@@ -68,11 +67,16 @@
         >
       </li>
       <li>
+        <button (click)="cerrarSesion()" class="btn btn-error">
+          <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+        </button>
+      </li>
+      <li>
         <a
-          routerLink="/object/1"
+          routerLink="/store"
           class="btn btn-ghost"
           routerLinkActive="text-secondary"
-          >Objects</a
+          >Store</a
         >
       </li>
     </ul>
