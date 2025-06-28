@@ -154,7 +154,6 @@ export class SupabaseService {
     return this.supabase;
   }
 
-  // Obtener todos los mensajes
   async getMessages(): Promise<{ data: Message[] | null; error: any }> {
     return await this.supabase
       .from('messages')

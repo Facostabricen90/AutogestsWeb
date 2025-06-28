@@ -1,8 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { catchError, of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { Producto } from '@/models/Producto';
 import { Marca } from '@/models/Marca';
@@ -69,7 +68,6 @@ export class ProductsPageComponent implements OnInit {
     private categoriaService: CategoriesService,
     private supabase: SupabaseService,
     private empresaService: BusinessService,
-    private router: Router
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -181,7 +179,7 @@ export class ProductsPageComponent implements OnInit {
     }
   }
 
-  private async cargarProductosDetallados(): Promise<void> {
+  public async cargarProductosDetallados(): Promise<void> {
     this.isLoading.set(true);
     try {
       const userId = await this.supabase.getCurrentUserId();
